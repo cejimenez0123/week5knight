@@ -12,20 +12,28 @@ let gameState = {
 function changePlayer() {
     // if the current player is player 1 at the end of a move
     if (gameState.whoseTurn === 1) {
-        let playerTwoHealth = document.getElementById("playerOneHealth");
+        let playerOneHealth = document.getElementById("playerOneHealth");
+        let playerTwoHealth = document.getElementById("playerTwoHealth");
         // conversts the innerHTML from string to a number and stores it in a variable
-        let playerTwoHealthNum = Number(playerTwoHealth.innerHTML);
+        let playerOneHealthNum = Number(playerTwoHealth.innerHTML);
+        let playerTwoHealthNum = Number(playerOneHealth.innerHTML);
         // reduces by 10
-        playerTwoHealthNum -= 10;
+        playerOneHealthNum -= 10;
         // resets the HTML to the new value
-        playerTwoHealth.innerHTML = playerTwoHealthNum;
+        playerOneHealth.innerHTML = playerOneHealthNum;
+        if(playerTwoHealthNum<0){
+            playerTwoHealth.innerHTML=0
+            gameOver()
+            return
 
+        }
         // checks if the player has reached 0 health
-        if (playerTwoHealthNum <= 0) {
+        if (playerOneHealthNum <= 0) {
             // ensures health does not dig into the negative
-            playerTwoHealth = 0;
+            playerOneHealth.innerHTML = 0;
             // ends the game
             gameOver();
+            return
         }
         else {
             // switch to the next player and change the UI's display / behavior
@@ -58,10 +66,12 @@ function gameOver() {
 
 // function that allows the player two attack button to reduce the player two's
 // health
+ //game start
 function attackPlayerTwo() {
     // compartmentalized function that will switch the player 2 attack button to inactive
     // and player 1 attack button to active using DOM manipulation
     // this also DISABLES the button, meaning they are not interactable
+    
     function changeButtonStatus() {
         let playerTwoAttackButton = document.getElementById("playerTwoAttack");
         playerTwoAttackButton.disabled = true;
@@ -79,11 +89,12 @@ function attackPlayerTwo() {
     function animatePlayer() {
         // an array containing the images using in player one's animation
         // the indices are later used to cycle / "animate" when the player attacks
+        // player two attacks from the right to left
         let playerOneFrames = [
             "./images/L_Idle.png",
             "./images/L_Attack.png"
         ];
-
+        //grab the html object
         let playerSprite = document.getElementById("playerTwoSprite");
         // function we will call in setTimeout, before the frames change back
         // the idle stance
@@ -97,13 +108,14 @@ function attackPlayerTwo() {
         // ** CHECK THE CSS TO NOTE THE CHANGES MADE **
         playerSprite.classList.add("attack");
 
-        // grabs the enemy sprite
+        // Takes damage
         let enemySprite = document.getElementById("playerOneSprite");
         let enemyDamage = document.getElementById("SFX_PlayerDamage");
         // removes the 'idle' class from the enemy sprite
         enemySprite.classList.remove("idle");
         // adds the 'attack' class to the enemy sprite
         // ** CHECK THE CSS TO NOTE THE CHANGES MADE **
+
         enemySprite.classList.add("damage");
         // sound that plays when enemy takes damage
         enemyDamage.play();
@@ -126,6 +138,8 @@ function attackPlayerTwo() {
     // for easy reading,
     // we do not include ALL of the above code within this condition
     // instead, we create higher-order functions to keep the code neat and readable
+    //This may be able to be simplified because of the of the fact we
+    
     if (gameState.whoseTurn === 1) {
         animatePlayer();
         changeButtonStatus();
